@@ -1,5 +1,6 @@
 from fastapi import FastAPI,Query
 from pydantic import BaseModel
+from app.database import test_connection
 
 class Demand(BaseModel):
     text: str
@@ -17,10 +18,14 @@ app = FastAPI(
 )
 
 
-
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    db_status = test_connection()
+
+    return {
+        "status": "ok",
+        "database": "connected" if db_status else "disconnected"
+    }
 
 
 @app.get("/api/v1/demands")
